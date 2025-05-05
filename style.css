@@ -1,29 +1,42 @@
+/* Define CSS variables for reusability */
+:root {
+  --background-color: #222;
+  --card-background: rgba(0, 0, 0, 0.8);
+  --button-background: rgba(124, 124, 124, 0.17);
+  --button-hover: rgba(124, 124, 124, 0.42);
+  --text-color: white;
+  --font-family: 'Open Sans', sans-serif;
+}
+
 body {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
-  font-family: 'Open Sans', sans-serif;
-  background: #222;
+  font-family: var(--font-family);
+  background: var(--background-color);
   background-image: url('https://source.unsplash.com/1600x900/?landscape');
   font-size: 120%;
+  color: var(--text-color);
 }
 
 .card {
-  background: #000000d0;
-  color: white;
+  background: var(--card-background);
+  color: var(--text-color);
   padding: 2em;
   border-radius: 30px;
   width: 100%;
   max-width: 420px;
   margin: 1em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .search {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5em;
 }
 
 button {
@@ -33,10 +46,19 @@ button {
   height: 44px;
   width: 44px;
   outline: none;
-  background: #7c7c7c2b;
-  color: white;
+  background: var(--button-background);
+  color: var(--text-color);
   cursor: pointer;
-  transition: 0.2s ease-in-out;
+  transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+button:hover {
+  background: var(--button-hover);
+  transform: scale(1.1);
+}
+
+button:focus {
+  outline: 2px solid var(--text-color);
 }
 
 input.search-bar {
@@ -44,20 +66,17 @@ input.search-bar {
   outline: none;
   padding: 0.4em 1em;
   border-radius: 24px;
-  background: #7c7c7c2b;
-  color: white;
+  background: var(--button-background);
+  color: var(--text-color);
   font-family: inherit;
   font-size: 105%;
   width: calc(100% - 100px);
 }
 
-button:hover {
-  background: #7c7c7c6b;
-}
-
 h1.temp {
   margin: 0;
   margin-bottom: 0.4em;
+  font-size: 2.5em;
 }
 
 .flex {
@@ -79,8 +98,29 @@ h1.temp {
 .weather.loading:after {
   visibility: visible;
   content: "Loading...";
-  color: white;
+  color: var(--text-color);
   position: absolute;
   top: 0;
   left: 20px;
+  font-style: italic;
+}
+
+/* Add responsive design for smaller screens */
+@media (max-width: 600px) {
+  body {
+    font-size: 100%;
+  }
+
+  .card {
+    padding: 1.5em;
+    border-radius: 20px;
+  }
+
+  h1.temp {
+    font-size: 2em;
+  }
+
+  input.search-bar {
+    font-size: 95%;
+  }
 }

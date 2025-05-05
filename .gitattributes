@@ -1,18 +1,25 @@
-# Handle line endings for text files
+# Automatically normalize line endings for text files
 * text=auto
 
-# Ensure .css, .html, and .js files are treated as text files
+# Treat common web development files as text
 *.css text
 *.html text
 *.js text
+*.json text
+*.xml text
+*.md text
+*.txt text
 
 # Treat image files as binary (do not attempt to diff them)
 *.png binary
 *.jpg binary
 *.jpeg binary
 *.gif binary
+*.ico binary
 
-# Other common binary files
+# Other common binary files (e.g., fonts, vector graphics)
 *.svg binary
 *.woff binary
 *.woff2 binary
+*.ttf binary
+*.eot binary
