@@ -1,26 +1,36 @@
+const DEFAULT_CITY = "Berlin";
+const WEATHER_API_BASE = "https://api.openweathermap.org/data/2.5/weather";
+const GEOCODE_API_BASE = "https://api.opencagedata.com/geocode/v1/json";
+
 const weatherApp = (() => {
   const weather = {
     apiKey: "6eac3c09ad7d480b8a2c5a975c606574",
-    fetchWeather(city) {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${this.apiKey}`;
-      fetch(url)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("No weather found.");
-          }
-          return response.json();
-        })
-        .then((data) => this.displayWeather(data))
-        .catch((error) => {
-          console.error(error);
-          alert("Unable to fetch weather data. Please try again.");
-        });
+    async fetchWeather(city) {
+      const url = `${WEATHER_API_BASE}?q=${city}&units=metric&appid=${this.apiKey}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("No weather found.");
+        }
+        const data = await response.json();
+        weather.displayWeather(data);
+      } catch (error) {
+        console.error(error);
+        alert("Unable to fetch weather data. Please try again.");
+      }
     },
     displayWeather(data) {
       const { name } = data;
-      const { icon, description } = data.weather[0];
-      const { temp, humidity } = data.main;
-      const { speed } = data.wind;
+      const weatherInfo = data.weather?.[0];
+      const { temp, humidity } = data.main || {};
+      const { speed } = data.wind || {};
+
+      if (!name || !weatherInfo || temp === undefined || humidity === undefined || speed === undefined) {
+        alert("Incomplete weather data received. Please try again.");
+        return;
+      }
+
+      const { icon, description } = weatherInfo;
 
       document.querySelector(".city").innerText = `Weather in ${name}`;
       document.querySelector(".icon").src = `https://openweathermap.org/img/wn/${icon}.png`;
@@ -44,30 +54,26 @@ const weatherApp = (() => {
 
   const geocode = {
     apiKey: "2e5a18c12828485393d26e6248d633f8",
-    reverseGeocode(latitude, longitude) {
+    async reverseGeocode(latitude, longitude) {
       const query = `${latitude},${longitude}`;
-      const url = `https://api.opencagedata.com/geocode/v1/json?key=${this.apiKey}&q=${encodeURIComponent(query)}&pretty=1&no_annotations=1`;
+      const url = `${GEOCODE_API_BASE}?key=${this.apiKey}&q=${encodeURIComponent(query)}&pretty=1&no_annotations=1`;
 
-      fetch(url)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Unable to reverse geocode location.");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          const city = data.results[0]?.components?.city;
-          if (city) {
-            weather.fetchWeather(city);
-          } else {
-            throw new Error("City not found in geocoding response.");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          alert("Unable to determine your location. Defaulting to Berlin.");
-          weather.fetchWeather("Berlin");
-        });
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Unable to reverse geocode location.");
+        }
+        const data = await response.json();
+        const city = data.results[0]?.components?.city;
+        if (city) {
+          weather.fetchWeather(city);
+        } else {
+          throw new Error("City not found in geocoding response.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "An unexpected error occurred. Please try again.");
+      }
     },
     getLocation() {
       if (navigator.geolocation) {
@@ -78,27 +84,33 @@ const weatherApp = (() => {
           (error) => {
             console.error(error);
             alert("Geolocation permission denied. Defaulting to Berlin.");
-            weather.fetchWeather("Berlin");
+            weather.fetchWeather(DEFAULT_CITY);
           }
         );
       } else {
         alert("Geolocation is not supported by your browser. Defaulting to Berlin.");
-        weather.fetchWeather("Berlin");
-      }
-    },
-  };
+        weather.fetchWeather(DEFAULT_CITY);
+            }
+          },
+        };
 
-  // Event Listeners
-  document.querySelector(".search button").addEventListener("click", () => {
-    weather.search();
-  });
+        // Event Listeners
+        document.querySelector(".search button").addEventListener("click", () => {
+          weather.search();
+        });
 
-  document.querySelector(".search-bar").addEventListener("keyup", (event) => {
-    if (event.key === "Enter") {
-      weather.search();
-    }
-  });
+        let debounceTimer;
+        document.querySelector(".search-bar").addEventListener("keyup", (event) => {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            if (event.key === "Enter") {
+        weather.search();
+            }
+          }, 300); // 300ms debounce delay
+        });
 
-  // Initialize App
-  geocode.getLocation();
-})();
+        // Initialize App
+        document.addEventListener("DOMContentLoaded", () => {
+          geocode.getLocation();
+        });
+      })();
