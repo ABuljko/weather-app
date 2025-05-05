@@ -1,2 +1,18 @@
-# Auto detect text files and perform LF normalization
+# Handle line endings for text files
 * text=auto
+
+# Ensure .css, .html, and .js files are treated as text files
+*.css text
+*.html text
+*.js text
+
+# Treat image files as binary (do not attempt to diff them)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+
+# Other common binary files
+*.svg binary
+*.woff binary
+*.woff2 binary
