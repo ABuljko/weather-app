@@ -6,7 +6,14 @@ A simple weather application that fetches and displays real-time weather data fo
 
 - Search for weather information by city name.
 - Automatically fetch weather data for the user's current location using geolocation.
-- Displays temperature, weather description, humidity, and wind speed.
+- Displays:
+  - Temperature
+  - Feels Like Temperature
+  - Minimum and Maximum Temperatures
+  - Weather Description
+  - Humidity
+  - Wind Speed
+  - Sunrise and Sunset Times
 - Dynamic background images based on the city.
 - Responsive design for mobile and desktop devices.
 
@@ -30,18 +37,24 @@ A simple weather application that fetches and displays real-time weather data fo
    cd weather-app
    ```
 
-3. Open index.html in your browser to run the app.
+3. Open `index.html` in your browser to run the app.
 
 ## Usage
 
 - Enter a city name in the search bar and press the search button or hit "Enter".
 - Allow location access to fetch weather data for your current location.
-- View the weather details including temperature, description, humidity, and wind speed.
+- View the weather details including:
+  - Temperature
+  - Feels Like Temperature
+  - Minimum and Maximum Temperatures
+  - Weather Description
+  - Humidity
+  - Wind Speed
+  - Sunrise and Sunset Times
 
 ## API Keys
 
 This app uses the following APIs:
 
-- OpenWeatherMap API: Replace the apiKey in script.js with your own API key from OpenWeatherMap.
-
-- OpenCage Geocoder API: Replace the apiKey in script.js with your own API key from OpenCage Geocoder.
+- **OpenWeatherMap API**: Replace the `apiKey` in `script.js` with your own API key from OpenWeatherMap.
+- **OpenCage Geocoder API**: Replace the `apiKey` in `script.js` with your own API key from OpenCage Geocoder.

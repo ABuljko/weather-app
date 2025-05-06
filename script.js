@@ -22,15 +22,20 @@ const weatherApp = (() => {
     displayWeather(data) {
       const { name } = data;
       const weatherInfo = data.weather?.[0];
-      const { temp, humidity } = data.main || {};
+      const { temp, feels_like, temp_min, temp_max, humidity } = data.main || {};
       const { speed } = data.wind || {};
+      const { sunrise, sunset } = data.sys || {};
 
-      if (!name || !weatherInfo || temp === undefined || humidity === undefined || speed === undefined) {
+      if (!name || !weatherInfo || temp === undefined || feels_like === undefined || temp_min === undefined || temp_max === undefined || humidity === undefined || speed === undefined || sunrise === undefined || sunset === undefined) {
         alert("Incomplete weather data received. Please try again.");
         return;
       }
 
       const { icon, description } = weatherInfo;
+
+      // Convert sunrise and sunset times from UNIX timestamp to a readable format
+      const sunriseTime = new Date(sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const sunsetTime = new Date(sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       document.querySelector(".city").innerText = `Weather in ${name}`;
       document.querySelector(".icon").src = `https://openweathermap.org/img/wn/${icon}.png`;
@@ -39,6 +44,10 @@ const weatherApp = (() => {
       document.querySelector(".temp").innerText = `${temp}°C`;
       document.querySelector(".humidity").innerText = `Humidity: ${humidity}%`;
       document.querySelector(".wind").innerText = `Wind speed: ${speed} km/h`;
+      document.querySelector(".feels-like").innerText = `Feels like: ${feels_like}°C`;
+      document.querySelector(".temp-range").innerText = `Min/Max: ${temp_min}°C / ${temp_max}°C`;
+      document.querySelector(".sunrise").innerText = `Sunrise: ${sunriseTime}`;
+      document.querySelector(".sunset").innerText = `Sunset: ${sunsetTime}`;
       document.querySelector(".weather").classList.remove("loading");
       document.body.style.backgroundImage = `url('https://picsum.photos/1600/900?random=${name}')`;
     },
@@ -90,27 +99,27 @@ const weatherApp = (() => {
       } else {
         alert("Geolocation is not supported by your browser. Defaulting to Berlin.");
         weather.fetchWeather(DEFAULT_CITY);
-            }
-          },
-        };
+      }
+    },
+  };
 
-        // Event Listeners
-        document.querySelector(".search button").addEventListener("click", () => {
-          weather.search();
-        });
+  // Event Listeners
+  document.querySelector(".search button").addEventListener("click", () => {
+    weather.search();
+  });
 
-        let debounceTimer;
-        document.querySelector(".search-bar").addEventListener("keyup", (event) => {
-          clearTimeout(debounceTimer);
-          debounceTimer = setTimeout(() => {
-            if (event.key === "Enter") {
+  let debounceTimer;
+  document.querySelector(".search-bar").addEventListener("keyup", (event) => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      if (event.key === "Enter") {
         weather.search();
-            }
-          }, 300); // 300ms debounce delay
-        });
+      }
+    }, 300); // 300ms debounce delay
+  });
 
-        // Initialize App
-        document.addEventListener("DOMContentLoaded", () => {
-          geocode.getLocation();
-        });
-      })();
+  // Initialize App
+  document.addEventListener("DOMContentLoaded", () => {
+    geocode.getLocation();
+  });
+})();
